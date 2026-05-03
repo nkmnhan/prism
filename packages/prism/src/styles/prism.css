@@ -109,6 +109,30 @@
     background-color: hsl(var(--background) / var(--prism-nav-opacity));
     border-top: 1px solid hsl(var(--border) / var(--prism-border-opacity));
   }
+
+  .prism-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--prism-radius-md);
+    font-weight: 600;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    cursor: pointer;
+    user-select: none;
+    transition-property: opacity, transform, box-shadow, background-color;
+    transition-timing-function: var(--prism-spring);
+    transition-duration: var(--prism-duration-fast);
+
+    &:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
 }
 
 /* ─── Utilities ───────────────────────────────────────────────────────────── */
