@@ -1,0 +1,27 @@
+import { Meta } from '@storybook/blocks'
+
+<Meta title="Prism / Introduction" />
+
+# Prism — Apple HIG Liquid Glass
+
+A React + Tailwind CSS v4 component library implementing Apple's Human Interface Guidelines and iOS 26 liquid glass design language.
+
+## Setup
+
+```css
+@import "tailwindcss";
+@import "@nkmnhan/prism/styles";
+```
+
+## BEM + clsxMerge Pattern
+
+Every component composes classes in three lines:
+
+```tsx
+className={clsxMerge(
+  "prism-card",                                      // Block: identity + material
+  "flex flex-col gap-4 p-6 rounded-2xl",             // Element: layout + structure
+  isActive && "shadow-glass ring-1 ring-white/10",   // Modifier: state/variant
+  props.className                                    // Caller override — always last
+)}
+```
