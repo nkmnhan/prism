@@ -1,49 +1,72 @@
 @import "tailwindcss";
 @import "../../../../packages/prism/src/styles/prism.css";
 
-/* Semantic tokens — light mode (mirrors MediTrack defaults) */
+/* Tell Tailwind v4 to scan component source files (outside this app's directory) */
+@source "../../../../packages/prism/src";
+
+/* Semantic tokens — light mode
+   --X (raw HSL numbers) → used by prism.css: hsl(var(--X) / opacity)
+   --color-X (full hsl)  → used by Tailwind utilities: bg-*, text-*, border-* */
 :root {
+  /* Raw HSL for prism.css opacity syntax */
   --background: 0 0% 96%;
   --foreground: 222 47% 11%;
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
   --border: 214 32% 85%;
   --input: 214 32% 85%;
-  --primary: 221 83% 53%;
-  --primary-foreground: 210 40% 98%;
-  --muted: 210 40% 92%;
-  --muted-foreground: 215 16% 47%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
+
+  /* Full HSL for Tailwind v4 utilities */
+  --color-background: hsl(0 0% 96%);
+  --color-foreground: hsl(222 47% 11%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(222 47% 11%);
+  --color-border: hsl(214 32% 85%);
+  --color-input: hsl(214 32% 85%);
+  --color-primary: hsl(221 83% 53%);
+  --color-primary-foreground: hsl(210 40% 98%);
+  --color-muted: hsl(210 40% 92%);
+  --color-muted-foreground: hsl(215 16% 47%);
+  --color-destructive: hsl(0 84% 60%);
+  --color-destructive-foreground: hsl(210 40% 98%);
 }
 
 .dark {
+  /* Raw HSL for prism.css */
   --background: 222 47% 8%;
   --foreground: 210 40% 98%;
   --card: 222 47% 12%;
   --card-foreground: 210 40% 98%;
   --border: 217 33% 22%;
   --input: 217 33% 22%;
-  --primary: 221 83% 60%;
-  --primary-foreground: 210 40% 98%;
-  --muted: 217 33% 20%;
-  --muted-foreground: 215 20% 60%;
-  --destructive: 0 72% 51%;
-  --destructive-foreground: 210 40% 98%;
+
+  /* Full HSL for Tailwind v4 */
+  --color-background: hsl(222 47% 8%);
+  --color-foreground: hsl(210 40% 98%);
+  --color-card: hsl(222 47% 12%);
+  --color-card-foreground: hsl(210 40% 98%);
+  --color-border: hsl(217 33% 22%);
+  --color-input: hsl(217 33% 22%);
+  --color-primary: hsl(221 83% 60%);
+  --color-primary-foreground: hsl(210 40% 98%);
+  --color-muted: hsl(217 33% 20%);
+  --color-muted-foreground: hsl(215 20% 60%);
+  --color-destructive: hsl(0 72% 51%);
+  --color-destructive-foreground: hsl(210 40% 98%);
 }
 
-/* Bridge: maps semantic CSS vars → Tailwind v4 color utilities (bg-*, text-*, border-*) */
-@theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
+/* Register --color-* vars with Tailwind v4 (proven pattern from e-portfolio) */
+@theme {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+  --color-card: var(--color-card);
+  --color-card-foreground: var(--color-card-foreground);
+  --color-border: var(--color-border);
+  --color-input: var(--color-input);
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+  --color-destructive: var(--color-destructive);
+  --color-destructive-foreground: var(--color-destructive-foreground);
 }
