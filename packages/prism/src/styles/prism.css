@@ -1,55 +1,132 @@
-/* Prism — glass material design tokens */
-:root {
-  /* Blur levels — HIG liquid glass standard values */
-  --prism-blur-sm: 10px;
-  --prism-blur-md: 20px;
-  --prism-blur-lg: 40px;
-  --prism-blur-xl: 80px;
+/* Prism — Apple HIG liquid glass design tokens + components */
 
-  /* Glass surface opacity */
-  --prism-surface-opacity: 0.6;
-  --prism-nav-opacity: 0.8;
-  --prism-sheet-opacity: 0.85;
-  --prism-border-opacity: 0.2;
+/* ─── Tokens ─────────────────────────────────────────────────────────────── */
 
-  /* Specular highlight (white sheen on top edge) */
-  --prism-specular: inset 0 1px 0 rgb(255 255 255 / 0.1);
-  --prism-specular-strong: inset 0 1px 0 rgb(255 255 255 / 0.2);
+@layer base {
+  :root {
+    /* Blur levels — HIG liquid glass standard values */
+    --prism-blur-sm: 10px;
+    --prism-blur-md: 20px;
+    --prism-blur-lg: 40px;
+    --prism-blur-xl: 80px;
 
-  /* Glass shadows */
-  --prism-shadow: 0 8px 32px rgb(0 0 0 / 0.08);
-  --prism-shadow-lg: 0 16px 64px rgb(0 0 0 / 0.12);
+    /* Glass surface opacity */
+    --prism-surface-opacity: 0.6;
+    --prism-nav-opacity: 0.8;
+    --prism-sheet-opacity: 0.85;
+    --prism-border-opacity: 0.2;
 
-  /* HIG motion curves */
-  --prism-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --prism-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
-  --prism-ease-out: cubic-bezier(0, 0, 0.2, 1);
+    /* Specular highlight (white sheen on top edge) */
+    --prism-specular: inset 0 1px 0 rgb(255 255 255 / 0.1);
+    --prism-specular-strong: inset 0 1px 0 rgb(255 255 255 / 0.2);
 
-  /* HIG animation durations */
-  --prism-duration-fast: 150ms;
-  --prism-duration-base: 250ms;
-  --prism-duration-slow: 400ms;
+    /* Glass shadows */
+    --prism-shadow: 0 8px 32px rgb(0 0 0 / 0.08);
+    --prism-shadow-lg: 0 16px 64px rgb(0 0 0 / 0.12);
 
-  /* HIG typography scale (unitless — use with calc) */
-  --prism-text-caption2: 11;
-  --prism-text-caption1: 12;
-  --prism-text-footnote: 13;
-  --prism-text-subheadline: 15;
-  --prism-text-callout: 16;
-  --prism-text-body: 17;
-  --prism-text-headline: 17;
-  --prism-text-title3: 20;
-  --prism-text-title2: 22;
-  --prism-text-title1: 28;
-  --prism-text-large-title: 34;
+    /* HIG motion curves */
+    --prism-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --prism-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --prism-ease-out: cubic-bezier(0, 0, 0.2, 1);
 
-  /* HIG minimum touch target */
-  --prism-touch-target: 44px;
+    /* HIG animation durations */
+    --prism-duration-fast: 150ms;
+    --prism-duration-base: 250ms;
+    --prism-duration-slow: 400ms;
 
-  /* HIG corner radii */
-  --prism-radius-sm: 8px;
-  --prism-radius-md: 12px;
-  --prism-radius-lg: 16px;
-  --prism-radius-xl: 24px;
-  --prism-radius-sheet: 20px;
+    /* HIG typography scale (unitless — use with calc) */
+    --prism-text-caption2: 11;
+    --prism-text-caption1: 12;
+    --prism-text-footnote: 13;
+    --prism-text-subheadline: 15;
+    --prism-text-callout: 16;
+    --prism-text-body: 17;
+    --prism-text-headline: 17;
+    --prism-text-title3: 20;
+    --prism-text-title2: 22;
+    --prism-text-title1: 28;
+    --prism-text-large-title: 34;
+
+    /* HIG minimum touch target */
+    --prism-touch-target: 44px;
+
+    /* HIG corner radii */
+    --prism-radius-sm: 8px;
+    --prism-radius-md: 12px;
+    --prism-radius-lg: 16px;
+    --prism-radius-xl: 24px;
+    --prism-radius-sheet: 20px;
+  }
+}
+
+/* ─── Component classes ───────────────────────────────────────────────────── */
+
+@layer components {
+  .prism-surface {
+    backdrop-filter: blur(var(--prism-blur-xl));
+    -webkit-backdrop-filter: blur(var(--prism-blur-xl));
+    background-color: hsl(var(--card) / var(--prism-surface-opacity));
+    border: 1px solid hsl(var(--border) / var(--prism-border-opacity));
+    border-radius: var(--prism-radius-lg);
+  }
+
+  .prism-card {
+    backdrop-filter: blur(var(--prism-blur-md));
+    -webkit-backdrop-filter: blur(var(--prism-blur-md));
+    background-color: hsl(var(--card) / var(--prism-surface-opacity));
+    border: 1px solid hsl(var(--border) / var(--prism-border-opacity));
+    border-radius: var(--prism-radius-lg);
+    padding: 1.5rem;
+  }
+
+  .prism-nav {
+    backdrop-filter: blur(var(--prism-blur-lg));
+    -webkit-backdrop-filter: blur(var(--prism-blur-lg));
+    background-color: hsl(var(--background) / var(--prism-nav-opacity));
+    border-bottom: 1px solid hsl(var(--border) / var(--prism-border-opacity));
+  }
+
+  .prism-sheet {
+    backdrop-filter: blur(var(--prism-blur-lg));
+    -webkit-backdrop-filter: blur(var(--prism-blur-lg));
+    background-color: hsl(var(--background) / var(--prism-sheet-opacity));
+    border-radius: var(--prism-radius-sheet) var(--prism-radius-sheet) 0 0;
+    border-top: 1px solid hsl(var(--border) / var(--prism-border-opacity));
+  }
+
+  .prism-input {
+    backdrop-filter: blur(var(--prism-blur-sm));
+    -webkit-backdrop-filter: blur(var(--prism-blur-sm));
+    background-color: hsl(var(--input) / 0.5);
+    border: 1px solid hsl(var(--border) / 0.3);
+    border-radius: var(--prism-radius-md);
+    min-height: var(--prism-touch-target);
+  }
+
+  .prism-tab-bar {
+    backdrop-filter: blur(var(--prism-blur-lg));
+    -webkit-backdrop-filter: blur(var(--prism-blur-lg));
+    background-color: hsl(var(--background) / var(--prism-nav-opacity));
+    border-top: 1px solid hsl(var(--border) / var(--prism-border-opacity));
+  }
+}
+
+/* ─── Utilities ───────────────────────────────────────────────────────────── */
+
+@utility shadow-glass {
+  box-shadow: var(--prism-shadow), var(--prism-specular);
+}
+
+@utility shadow-glass-lg {
+  box-shadow: var(--prism-shadow-lg), var(--prism-specular-strong);
+}
+
+@utility animate-prism-spring {
+  transition-timing-function: var(--prism-spring);
+  transition-duration: var(--prism-duration-base);
+}
+
+@utility animate-prism-ease {
+  transition-timing-function: var(--prism-ease);
+  transition-duration: var(--prism-duration-base);
 }

@@ -27,17 +27,12 @@ className={clsxMerge(
 | `PrismSurface` | `@nkmnhan/prism` | Base glass surface, configurable blur + elevation |
 | `PrismBlur` | `@nkmnhan/prism` | Pure backdrop-blur wrapper, no surface styling |
 
-## Tailwind Plugin Setup
+## Setup (Tailwind v4)
 
-```ts
-// tailwind.config.ts
-import prismPlugin from '@nkmnhan/prism/plugin'
-export default { plugins: [prismPlugin] }
-```
-
-```tsx
-// main entry (e.g. main.tsx)
-import '@nkmnhan/prism/styles'
+```css
+/* app.css — one line, no JS config needed */
+@import "tailwindcss";
+@import "@nkmnhan/prism/styles";
 ```
 
 ## Tailwind Plugin Classes
