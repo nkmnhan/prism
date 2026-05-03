@@ -1,0 +1,55 @@
+/* Prism — glass material design tokens */
+:root {
+  /* Blur levels — HIG liquid glass standard values */
+  --prism-blur-sm: 10px;
+  --prism-blur-md: 20px;
+  --prism-blur-lg: 40px;
+  --prism-blur-xl: 80px;
+
+  /* Glass surface opacity */
+  --prism-surface-opacity: 0.6;
+  --prism-nav-opacity: 0.8;
+  --prism-sheet-opacity: 0.85;
+  --prism-border-opacity: 0.2;
+
+  /* Specular highlight (white sheen on top edge) */
+  --prism-specular: inset 0 1px 0 rgb(255 255 255 / 0.1);
+  --prism-specular-strong: inset 0 1px 0 rgb(255 255 255 / 0.2);
+
+  /* Glass shadows */
+  --prism-shadow: 0 8px 32px rgb(0 0 0 / 0.08);
+  --prism-shadow-lg: 0 16px 64px rgb(0 0 0 / 0.12);
+
+  /* HIG motion curves */
+  --prism-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --prism-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --prism-ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  /* HIG animation durations */
+  --prism-duration-fast: 150ms;
+  --prism-duration-base: 250ms;
+  --prism-duration-slow: 400ms;
+
+  /* HIG typography scale (unitless — use with calc) */
+  --prism-text-caption2: 11;
+  --prism-text-caption1: 12;
+  --prism-text-footnote: 13;
+  --prism-text-subheadline: 15;
+  --prism-text-callout: 16;
+  --prism-text-body: 17;
+  --prism-text-headline: 17;
+  --prism-text-title3: 20;
+  --prism-text-title2: 22;
+  --prism-text-title1: 28;
+  --prism-text-large-title: 34;
+
+  /* HIG minimum touch target */
+  --prism-touch-target: 44px;
+
+  /* HIG corner radii */
+  --prism-radius-sm: 8px;
+  --prism-radius-md: 12px;
+  --prism-radius-lg: 16px;
+  --prism-radius-xl: 24px;
+  --prism-radius-sheet: 20px;
+}
