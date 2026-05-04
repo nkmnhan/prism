@@ -1,0 +1,7 @@
+/* Prism Storybook entry — @import must precede @tailwind directives */
+@import './prism.css';
+@import './liquid-glass.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
