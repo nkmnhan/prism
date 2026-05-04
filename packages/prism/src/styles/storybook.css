@@ -1,7 +1,52 @@
-/* Prism Storybook entry — @import must precede @tailwind directives */
+/* Prism Storybook entry
+   @import must precede @tailwind directives (CSS spec requirement) */
 @import './prism.css';
 @import './liquid-glass.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Semantic color tokens for prism-* component classes ─────────────────
+   prism-surface / prism-card etc. use hsl(var(--card) / opacity) syntax.
+   These variables make that resolve correctly in Storybook. */
+@layer base {
+  :root {
+    --background:         0 0% 96%;
+    --foreground:         222 47% 11%;
+    --card:               0 0% 100%;
+    --card-foreground:    222 47% 11%;
+    --border:             214 32% 85%;
+    --input:              214 32% 85%;
+    --muted:              210 40% 92%;
+    --muted-foreground:   215 16% 47%;
+    --primary:            221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+  }
+
+  .dark {
+    --background:         222 47% 8%;
+    --foreground:         210 40% 98%;
+    --card:               222 47% 12%;
+    --card-foreground:    210 40% 98%;
+    --border:             217 33% 22%;
+    --input:              217 33% 22%;
+    --muted:              217 33% 20%;
+    --muted-foreground:   215 20% 60%;
+    --primary:            221 83% 60%;
+    --primary-foreground: 210 40% 98%;
+  }
+
+  /* Base typography — HIG SF Pro stack */
+  body {
+    font-family:
+      -apple-system,
+      "SF Pro Display",
+      "SF Pro Text",
+      "Helvetica Neue",
+      system-ui,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}

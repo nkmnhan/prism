@@ -4,12 +4,11 @@ import React from 'react'
 /**
  * Pure HTML + CSS liquid glass — zero JavaScript, GPU-only.
  *
- * Technique: SVG feTurbulence + feDisplacementMap (declared in HTML, GPU-rasterised).
- * `backdrop-filter: url(#lg-distort) blur() brightness() saturate()` — all compositor,
- * no main thread. Graceful fallback in Chrome (blur+saturate without url()).
+ * The global Storybook decorator provides:
+ *   • Colorful mesh-gradient background (required for backdrop-filter to be visible)
+ *   • SVG <filter id="lg-distort"> lens distortion (feTurbulence + feDisplacementMap)
  *
- * Copy the <svg id="lg-filters"> snippet once into your <body>, then add
- * class="lg lg-card" to any element.
+ * Stories here just render the .lg class elements directly.
  */
 const meta: Meta = {
   title: 'Prism/LiquidGlass (Pure CSS)',
@@ -21,15 +20,14 @@ const meta: Meta = {
           '### Pure HTML + CSS · Zero JS · GPU-only',
           '',
           '**Delivery**: One CSS file (`liquid-glass.css`) + one `<svg>` tag in `<body>`.',
-          'Works in any HTML page — no React, no Tailwind, no build step.',
           '',
-          '**GPU path**: `backdrop-filter` runs on the GPU compositor.',
-          '`transform: translateZ(0)` + `will-change: backdrop-filter` promote',
-          'the element to its own layer — no repaints, no layout thrashing.',
-          '',
-          '**Distortion** (`feTurbulence` → `feDisplacementMap`): GPU-rasterised in',
-          'Firefox and WebKit. Chrome ignores `url()` in `backdrop-filter` and falls',
-          'back to blur+saturate — still looks great.',
+          '**Improvements over existing glass libraries** (e.g. `liquidglass-tailwind`):',
+          '- `saturate()` in backdrop-filter — Apple vivid glass, not washed-out blur',
+          '- Blue-violet depth shadow `rgba(31,38,135,…)` — matches visionOS ambient',
+          '- HIG blur levels: 6/12/20/40/80px (not flat 16px)',
+          '- Specular highlights: `::before` diagonal + `::after` rim glow',
+          '- `prefers-reduced-transparency` accessibility fallback',
+          '- Segment control component',
         ].join('\n'),
       },
     },
@@ -38,202 +36,222 @@ const meta: Meta = {
 
 export default meta
 
-// ─── SVG filter — same as what liquid-glass.css documents ────────────────────
-
-const SvgFilters = () => (
-  <svg
-    id="lg-filters"
-    aria-hidden
-    focusable={false}
-    style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', pointerEvents: 'none' }}
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <defs>
-      <filter id="lg-distort" colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.009 0.009" numOctaves={1} seed={3} result="noise" />
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale={16} xChannelSelector="R" yChannelSelector="G" />
-      </filter>
-      <filter id="lg-distort-subtle" colorInterpolationFilters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
-        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.012" numOctaves={1} seed={3} result="noise" />
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale={8} xChannelSelector="R" yChannelSelector="G" />
-      </filter>
-    </defs>
-  </svg>
-)
-
-// ─── Gradient background (same as Storybook decorator) ───────────────────────
-
-const Background = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative min-h-screen overflow-hidden bg-slate-900 flex items-center justify-center p-12">
-    <SvgFilters />
-    {/* Colourful blobs required for blur/distortion to be visible */}
-    <div className="absolute inset-0">
-      <div className="absolute top-[-10%] left-[-5%]  w-[55%] h-[55%] rounded-full bg-violet-500/60 blur-[80px]" />
-      <div className="absolute top-[30%]  right-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-400/50    blur-[90px]" />
-      <div className="absolute bottom-[-5%] left-[30%] w-[45%] h-[45%] rounded-full bg-rose-400/50    blur-[70px]" />
-      <div className="absolute top-[55%]  left-[5%]  w-[35%] h-[35%] rounded-full bg-amber-400/40    blur-[60px]" />
-    </div>
-    <div className="relative z-10 flex flex-col items-center gap-8 w-full max-w-4xl">
-      {children}
-    </div>
-  </div>
-)
-
-// ─── Stories ─────────────────────────────────────────────────────────────────
+/* ── Card ────────────────────────────────────────────────────────────────── */
 
 export const Card: StoryObj = {
   name: 'Card (.lg .lg-card)',
   render: () => (
-    <Background>
-      <div className="lg lg-card" style={{ width: 340 }}>
-        <div className="relative z-10 flex flex-col gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center text-lg">🫀</div>
-            <div>
-              <p className="text-sm font-semibold text-white/90">Patient Overview</p>
-              <p className="text-xs text-white/55">James Wilson · Room 4B</p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            {[['72', 'BPM'], ['98%', 'SpO₂'], ['36.7', '°C']].map(([v, l]) => (
-              <div key={l} className="flex-1 bg-white/10 rounded-xl p-3 text-center">
-                <p className="text-xl font-bold text-white">{v}</p>
-                <p className="text-[10px] text-white/55 uppercase tracking-wide">{l}</p>
-              </div>
-            ))}
-          </div>
+    <div className="lg lg-card" style={{ width: 340 }}>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-lg">🫀</div>
+        <div>
+          <p className="text-sm font-semibold opacity-90">Patient Overview</p>
+          <p className="text-xs opacity-50">James Wilson · Room 4B</p>
         </div>
       </div>
-
-      <p className="text-white/40 text-xs font-mono">
-        {'<div class="lg lg-card">…</div>'}
-      </p>
-    </Background>
+      <div className="flex gap-2">
+        {[['72', 'BPM'], ['98%', 'SpO₂'], ['36.7', '°C']].map(([v, l]) => (
+          <div key={l} className="flex-1 bg-white/10 rounded-xl p-3 text-center">
+            <p className="text-xl font-bold">{v}</p>
+            <p className="text-[10px] uppercase tracking-wide opacity-50 mt-0.5">{l}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   ),
 }
+
+/* ── Pill ─────────────────────────────────────────────────────────────────── */
 
 export const Pill: StoryObj = {
   name: 'Pill (.lg .lg-pill)',
   render: () => (
-    <Background>
-      <div className="flex flex-wrap gap-4 justify-center">
-        <div className="lg lg-pill">
-          <span className="w-2 h-2 rounded-full bg-emerald-400" />
-          <span className="text-sm font-medium text-white/90">3 active alerts</span>
-        </div>
-        <div className="lg lg-pill">
-          <span className="w-2 h-2 rounded-full bg-amber-400" />
-          <span className="text-sm font-medium text-white/90">2 pending labs</span>
-        </div>
-        <div className="lg lg-pill">
-          <span className="w-2 h-2 rounded-full bg-sky-400" />
-          <span className="text-sm font-medium text-white/90">Vitals normal</span>
-        </div>
+    <div className="flex flex-wrap gap-4 justify-center">
+      <div className="lg lg-pill">
+        <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+        <span className="text-sm font-medium opacity-90">3 active alerts</span>
       </div>
-    </Background>
+      <div className="lg lg-pill">
+        <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+        <span className="text-sm font-medium opacity-90">2 pending labs</span>
+      </div>
+      <div className="lg lg-pill">
+        <span className="w-2 h-2 rounded-full bg-sky-400 shrink-0" />
+        <span className="text-sm font-medium opacity-90">Vitals normal</span>
+      </div>
+    </div>
   ),
 }
+
+/* ── Navigation bar ─────────────────────────────────────────────────────── */
+/* No position:absolute — render inline so it doesn't overlap other content */
 
 export const Nav: StoryObj = {
   name: 'Navigation bar (.lg .lg-nav)',
   render: () => (
-    <Background>
+    <div style={{ width: '100%', maxWidth: 480 }}>
       <div
         className="lg lg-nav"
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '0 1.5rem', height: '3.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+        style={{ padding: '0 1.25rem', height: '3.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
       >
-        <span className="text-white font-semibold text-sm relative z-10">MediTrack</span>
-        <div className="flex gap-4 relative z-10">
+        <span className="font-semibold text-sm opacity-90">MediTrack</span>
+        <div className="flex gap-5">
           {['Patients', 'Appointments', 'Records'].map((item) => (
-            <a key={item} href="#" className="text-sm text-white/70 hover:text-white/95 transition-colors">
+            <a key={item} href="#" className="text-xs opacity-60 hover:opacity-95 transition-opacity" style={{ textDecoration: 'none', color: 'inherit' }}>
               {item}
             </a>
           ))}
         </div>
       </div>
-    </Background>
+      <p className="text-center text-xs opacity-30 mt-3">.lg .lg-nav — blur(40px), bottom edge only</p>
+    </div>
   ),
 }
+
+/* ── Button ──────────────────────────────────────────────────────────────── */
 
 export const Button: StoryObj = {
   name: 'Button (.lg .lg-btn)',
   render: () => (
-    <Background>
-      <div className="flex flex-wrap gap-4 justify-center">
-        <button className="lg lg-btn lg-rounded-full px-6">
-          <span className="relative z-10 text-white/90 font-medium">View Records</span>
-        </button>
-        <button className="lg lg-btn">
-          <span className="relative z-10 text-white/90 font-medium">Schedule Visit</span>
-        </button>
-        <button className="lg lg-btn lg-rounded-lg px-6">
-          <span className="relative z-10 text-white/90 font-medium">+ Add Patient</span>
-        </button>
-      </div>
-    </Background>
+    <div className="flex flex-wrap gap-4 justify-center">
+      <button className="lg lg-btn lg-rounded-full" style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
+        View Records
+      </button>
+      <button className="lg lg-btn">
+        Schedule Visit
+      </button>
+      <button className="lg lg-btn lg-rounded-lg" style={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
+        + Add Patient
+      </button>
+    </div>
   ),
 }
+
+/* ── Segment control ─────────────────────────────────────────────────────── */
+
+export const Segment: StoryObj = {
+  name: 'Segmented control (.lg-segment)',
+  render: () => {
+    const [active, setActive] = React.useState(0)
+    const items = ['Day', 'Week', 'Month']
+    return (
+      <div className="flex flex-col items-center gap-4">
+        <div className="lg-segment">
+          {items.map((item, i) => (
+            <button
+              key={item}
+              className={['lg-segment-item', i === active ? 'active' : ''].join(' ')}
+              aria-selected={i === active}
+              onClick={() => setActive(i)}
+              style={{ color: 'inherit' }}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+        <p className="text-xs opacity-40">
+          Stolen from liquidglass-tailwind's .glass-segment — enhanced with saturate() + specular
+        </p>
+      </div>
+    )
+  },
+}
+
+/* ── Kitchen sink — real app layout ─────────────────────────────────────── */
+/* Column layout, no position:absolute, constrained width */
 
 export const KitchenSink: StoryObj = {
   name: 'Kitchen sink — full app layout',
   render: () => (
-    <Background>
-      {/* Nav */}
+    <div style={{ width: '100%', maxWidth: 480, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      {/* Nav — inline, not absolute */}
       <div
         className="lg lg-nav"
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '0 1.5rem', height: '3.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+        style={{ padding: '0 1.25rem', height: '3.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
       >
-        <span className="text-white font-semibold relative z-10">MediTrack</span>
-        <div className="flex gap-3 relative z-10">
-          <button className="lg lg-pill" style={{ padding: '0.25rem 0.875rem' }}>
-            <span className="text-xs text-white/80">ICU</span>
-          </button>
+        <span className="font-semibold text-sm opacity-90">MediTrack</span>
+        <button className="lg lg-pill" style={{ padding: '0.25rem 0.75rem' }}>
+          <span className="text-xs opacity-80">ICU Ward</span>
+        </button>
+      </div>
+
+      {/* Segment control */}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="lg-segment">
+          {['Today', 'Week', 'Month'].map((item, i) => (
+            <div key={item} className={['lg-segment-item', i === 0 ? 'active' : ''].join(' ')} style={{ color: 'inherit' }}>
+              {item}
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Cards row */}
-      <div className="flex flex-wrap gap-5 justify-center mt-10">
-        <div className="lg lg-card" style={{ width: 280 }}>
-          <div className="relative z-10">
-            <p className="text-xs text-white/55 mb-1">Today's admissions</p>
-            <p className="text-3xl font-bold text-white">14</p>
-            <p className="text-xs text-emerald-400 mt-1">↑ 3 vs yesterday</p>
-          </div>
+      {/* Stat cards */}
+      <div style={{ display: 'flex', gap: '0.75rem', padding: '0 0.5rem' }}>
+        <div className="lg lg-card" style={{ flex: 1, padding: '1rem' }}>
+          <p className="text-xs opacity-50 mb-1">Today's admissions</p>
+          <p className="text-3xl font-bold">14</p>
+          <p className="text-xs text-emerald-400 mt-1">↑ 3 vs yesterday</p>
         </div>
-        <div className="lg lg-card" style={{ width: 280 }}>
-          <div className="relative z-10">
-            <p className="text-xs text-white/55 mb-1">Pending labs</p>
-            <p className="text-3xl font-bold text-white">7</p>
-            <p className="text-xs text-amber-400 mt-1">2 critical</p>
-          </div>
+        <div className="lg lg-card" style={{ flex: 1, padding: '1rem' }}>
+          <p className="text-xs opacity-50 mb-1">Pending labs</p>
+          <p className="text-3xl font-bold">7</p>
+          <p className="text-xs text-amber-400 mt-1">2 critical</p>
         </div>
       </div>
 
-      {/* Input */}
-      <input
-        className="lg-input"
-        placeholder="Search patients…"
-        style={{ width: 340, color: 'white' }}
-      />
+      {/* Search */}
+      <div style={{ padding: '0 0.5rem' }}>
+        <input
+          className="lg-input"
+          placeholder="🔍  Search patients…"
+          style={{ color: 'inherit' }}
+        />
+      </div>
 
       {/* Buttons */}
-      <div className="flex gap-3">
-        <button className="lg lg-btn">
-          <span className="relative z-10 text-white/90 font-medium">New Appointment</span>
-        </button>
-        <button className="lg lg-btn lg-elevated">
-          <span className="relative z-10 text-white/90 font-medium">Emergency Admit</span>
-        </button>
+      <div style={{ display: 'flex', gap: '0.75rem', padding: '0 0.5rem' }}>
+        <button className="lg lg-btn" style={{ flex: 1 }}>New Appointment</button>
+        <button className="lg lg-btn lg-elevated" style={{ flex: 1 }}>Emergency Admit</button>
       </div>
-    </Background>
+
+      {/* Tab bar — inline at bottom */}
+      <div
+        className="lg lg-tab-bar"
+        style={{ padding: '0.5rem 0.25rem', display: 'flex', justifyContent: 'space-around' }}
+      >
+        {[
+          { icon: '🏥', label: 'Patients',  active: true  },
+          { icon: '📅', label: 'Schedule',  active: false },
+          { icon: '📋', label: 'Records',   active: false },
+          { icon: '✨', label: 'Clara',     active: false },
+        ].map(({ icon, label, active }) => (
+          <div
+            key={label}
+            style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              gap: '2px', padding: '0.25rem 1rem', opacity: active ? 1 : 0.4,
+            }}
+          >
+            <span style={{ fontSize: '1.25rem' }}>{icon}</span>
+            <span style={{ fontSize: '10px', fontWeight: 500, color: active ? '#60a5fa' : 'inherit' }}>
+              {label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
   ),
 }
 
+/* ── Copy-paste HTML snippet ─────────────────────────────────────────────── */
+
 export const CSSOnlyHtmlSnippet: StoryObj = {
   name: '📋 Copy-paste HTML snippet',
+  parameters: { layout: 'padded' },
   render: () => (
-    <div className="p-8 bg-slate-950 min-h-screen font-mono">
-      <h2 className="text-white text-lg font-bold mb-6">liquid-glass.css — Copy-paste HTML</h2>
+    <div className="p-8 rounded-2xl bg-black/40" style={{ fontFamily: 'monospace' }}>
+      <h2 className="text-white text-base font-bold mb-5">liquid-glass.css — Copy-paste HTML</h2>
       <pre className="text-emerald-400 text-xs leading-relaxed overflow-auto whitespace-pre">
 {`<!-- 1. Link the stylesheet -->
 <link rel="stylesheet" href="liquid-glass.css">
@@ -243,62 +261,42 @@ export const CSSOnlyHtmlSnippet: StoryObj = {
      style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none"
      xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <filter id="lg-distort"
-            color-interpolation-filters="sRGB"
-            x="-20%" y="-20%" width="140%" height="140%">
-      <feTurbulence type="fractalNoise"
-                    baseFrequency="0.009 0.009"
-                    numOctaves="1" seed="3" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise"
-                         scale="16"
-                         xChannelSelector="R" yChannelSelector="G"/>
+    <filter id="lg-distort" x="-20%" y="-20%" width="140%" height="140%"
+            color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.009" numOctaves="1" seed="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
-    <filter id="lg-distort-subtle"
-            color-interpolation-filters="sRGB"
-            x="-10%" y="-10%" width="120%" height="120%">
-      <feTurbulence type="fractalNoise"
-                    baseFrequency="0.012 0.012"
-                    numOctaves="1" seed="3" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise"
-                         scale="8"
-                         xChannelSelector="R" yChannelSelector="G"/>
+    <filter id="lg-distort-subtle" x="-10%" y="-10%" width="120%" height="120%"
+            color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="1" seed="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="8"  xChannelSelector="R" yChannelSelector="G"/>
     </filter>
   </defs>
 </svg>
 
-<!-- 3. Apply classes to any element -->
-
-<!-- Card -->
-<div class="lg lg-card">
-  <p>Content</p>
-</div>
-
-<!-- Nav -->
-<nav class="lg lg-nav" style="position:sticky;top:0">…</nav>
-
-<!-- Pill -->
+<!-- 3. Add classes -->
+<div class="lg lg-card">Card content</div>
+<nav class="lg lg-nav" style="position:sticky;top:0">Nav bar</nav>
 <span class="lg lg-pill">3 alerts</span>
-
-<!-- Button -->
-<button class="lg lg-btn">Tap me</button>
-
-<!-- Input -->
+<button class="lg lg-btn">Action</button>
 <input class="lg-input" placeholder="Search…">
 
 <!-- Bottom sheet -->
-<div class="lg lg-sheet" style="position:fixed;bottom:0;left:0;right:0">…</div>
+<div class="lg lg-sheet" style="position:fixed;bottom:0;left:0;right:0">Sheet</div>
 
-<!-- Blur modifiers: lg-blur-xs | lg-blur-sm | lg-blur-lg | lg-blur-xl -->
-<!-- Shadow modifiers: lg-elevated | lg-flat -->
-<!-- Radius modifiers: lg-rounded-sm | lg-rounded-md | lg-rounded-lg | lg-rounded-full -->
-<!-- Animation: lg-spring | lg-animate-appear | lg-animate-slide-up -->
+<!-- Segmented control (stolen from liquidglass-tailwind, enhanced) -->
+<div class="lg-segment">
+  <button class="lg-segment-item active" aria-selected="true">Day</button>
+  <button class="lg-segment-item">Week</button>
+  <button class="lg-segment-item">Month</button>
+</div>
 
-<!-- GPU notes:
-  • backdrop-filter runs on the GPU compositor — no layout, no paint
-  • transform:translateZ(0) + will-change:backdrop-filter = own layer
-  • feTurbulence feDisplacementMap = GPU rasterised in Firefox/WebKit
-  • Chrome: ignores url() in backdrop-filter → graceful blur+saturate fallback
--->`}
+<!-- Blue-violet depth shadows (rgba 31,38,135 = Apple ambient) -->
+<!-- Specular: ::before diagonal + ::after rim glow                -->
+<!-- Accessibility: prefers-reduced-transparency + prefers-reduced-motion -->
+<!-- Modifiers: lg-blur-xs/sm/lg/xl | lg-elevated | lg-flat       -->
+<!-- Radii:     lg-rounded-sm/md/lg/xl/full                        -->
+<!-- Animate:   lg-spring | lg-animate-appear | lg-animate-slide-up -->`}
       </pre>
     </div>
   ),

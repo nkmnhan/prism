@@ -1,0 +1,10 @@
+{
+  "extends": "../../packages/prism/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@nkmnhan/prism": ["../../packages/prism/src/index.ts"]
+    }
+  },
+  "include": ["src", ".storybook"]
+}
